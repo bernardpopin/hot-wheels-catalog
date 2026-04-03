@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "id": "1775211993710",
+      "model": "Datsun 240Z Custom",
+      "year": 2026,
+      "openWindow": false,
+      "bigWing": false,
+      "frontBoltPositionOnEdge": true,
+      "backBoltPositionOnEdge": true
+    },
+    {
+      "id": "1775212115303",
+      "model": "90' Acura NSX",
+      "year": 2018,
+      "openWindow": false,
+      "bigWing": true,
+      "frontBoltPositionOnEdge": true,
+      "backBoltPositionOnEdge": true
+    },
+    {
+      "id": "1775216684793",
+      "model": "Land Rover Defender 90",
+      "year": 2026,
+      "openWindow": false,
+      "bigWing": false,
+      "frontBoltPositionOnEdge": false,
+      "backBoltPositionOnEdge": false
+    }
+  ]
+}

@@ -1,29 +1,45 @@
-type ListItem = {
-  id: string | number;
-  label: string;
-};
+import Link from "next/link";
+import { readCatalog } from "@/app/lib/catalog";
 
-type ListProps = {
-  items: ListItem[];
-};
+export default async function List({
+  selectedId,
+  searchQuery,
+}: {
+  selectedId?: string;
+  searchQuery?: string;
+}) {
+  const { items } = await readCatalog();
 
-export default function List({ items }: ListProps) {
-  if (items.length === 0) {
-    return (
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">No items.</p>
-    );
-  }
+  const filtered = searchQuery
+    ? items.filter((item) =>
+        item.model.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : items;
 
   return (
-    <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
-      {items.map((item) => (
-        <li
-          key={item.id}
-          className="py-3 text-sm text-zinc-800 dark:text-zinc-200"
-        >
-          {item.label}
-        </li>
-      ))}
-    </ul>
+    <div className="rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
+      {filtered.length === 0 ? (
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          {searchQuery ? "No results." : "No models yet."}
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-1">
+          {filtered.map((item) => (
+            <li key={item.id}>
+              <Link
+                href={`/?selected=${item.id}`}
+                className={`block rounded px-3 py-2 text-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
+                  selectedId === item.id
+                    ? "bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50"
+                    : "text-zinc-700 dark:text-zinc-300"
+                }`}
+              >
+                {item.model}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
