@@ -39,10 +39,12 @@ function runTypeCheck(configPath) {
     path.dirname(configPath)
   );
 
-  // Override to ensure no emit
+  // Override to ensure no emit. incremental must be disabled when noEmit is
+  // true and no tsBuildInfoFile is set — otherwise tsc throws TS5074.
   const compilerOptions = {
     ...parsed.options,
     noEmit: true,
+    incremental: false,
   };
 
   // Create the program
