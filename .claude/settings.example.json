@@ -1,0 +1,44 @@
+{
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Read|Grep",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "node $PWD/hooks/read_hook.js"
+                    }
+                ]
+            },
+            {
+                "matcher": "*",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "jq . > pre-log.json"
+                    }
+                ]
+            }
+        ],
+        "PostToolUse": [
+            {
+                "matcher": "Write|Edit|MultiEdit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "node $PWD/hooks/tsc.js"
+                    }
+                ]
+            },
+            {
+                "matcher": "*",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "jq . > post-log.json"
+                    }
+                ]
+            }
+        ]
+    }
+}
