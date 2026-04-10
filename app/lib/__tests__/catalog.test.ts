@@ -1,17 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { CatalogItem } from "@/app/lib/catalog";
 
-// vi.hoisted ensures these vi.fn() instances are created before vi.mock hoisting
 const { mockReadFile, mockWriteFile } = vi.hoisted(() => ({
   mockReadFile: vi.fn(),
   mockWriteFile: vi.fn(),
 }));
 
 vi.mock("fs/promises", () => ({
-  // Named exports used by catalog.ts
   readFile: mockReadFile,
   writeFile: mockWriteFile,
-  // Default export for ESM interop
   default: { readFile: mockReadFile, writeFile: mockWriteFile },
 }));
 
@@ -19,8 +16,16 @@ import { readCatalog, writeCatalog } from "@/app/lib/catalog";
 
 const item1: CatalogItem = {
   id: "1",
-  model: "Datsun 240Z Custom",
-  year: 2021,
+  modelName: "Datsun 240Z Custom",
+  carBrand: "Nissan",
+  carModel: "240Z",
+  carProductionYear: 1969,
+  releaseYear: 2021,
+  yearOnChassis: null,
+  series: "",
+  color: "",
+  modelNumber: "",
+  priceRange: "",
   openWindow: true,
   bigWing: false,
   frontBoltPositionOnEdge: true,
@@ -29,8 +34,16 @@ const item1: CatalogItem = {
 
 const item2: CatalogItem = {
   id: "2",
-  model: "90' Acura NSX",
-  year: 2022,
+  modelName: "90' Acura NSX",
+  carBrand: "Acura",
+  carModel: "NSX",
+  carProductionYear: 1990,
+  releaseYear: 2022,
+  yearOnChassis: null,
+  series: "",
+  color: "",
+  modelNumber: "",
+  priceRange: "",
   openWindow: false,
   bigWing: true,
   frontBoltPositionOnEdge: false,

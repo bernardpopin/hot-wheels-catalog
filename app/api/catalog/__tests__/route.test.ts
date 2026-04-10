@@ -14,8 +14,16 @@ const mockWriteCatalog = vi.mocked(writeCatalog);
 
 const item1: CatalogItem = {
   id: "1",
-  model: "Datsun 240Z Custom",
-  year: 2021,
+  modelName: "Datsun 240Z Custom",
+  carBrand: "Nissan",
+  carModel: "240Z",
+  carProductionYear: 1969,
+  releaseYear: 2021,
+  yearOnChassis: null,
+  series: "",
+  color: "",
+  modelNumber: "",
+  priceRange: "",
   openWindow: true,
   bigWing: false,
   frontBoltPositionOnEdge: true,
@@ -50,8 +58,16 @@ describe("GET /api/catalog", () => {
 
 describe("POST /api/catalog", () => {
   const newItemInput = {
-    model: "Land Rover Defender 90",
-    year: 2023,
+    modelName: "Land Rover Defender 90",
+    carBrand: "Land Rover",
+    carModel: "Defender 90",
+    carProductionYear: 1983,
+    releaseYear: 2023,
+    yearOnChassis: null,
+    series: "",
+    color: "",
+    modelNumber: "",
+    priceRange: "",
     openWindow: false,
     bigWing: false,
     frontBoltPositionOnEdge: false,
@@ -87,8 +103,7 @@ describe("POST /api/catalog", () => {
     mockReadCatalog.mockResolvedValue({ items: [] });
 
     const input = {
-      model: "Test Car",
-      year: 2020,
+      ...newItemInput,
       openWindow: true,
       bigWing: true,
       frontBoltPositionOnEdge: true,

@@ -12,7 +12,7 @@ export default async function List({
 
   const filtered = searchQuery
     ? items.filter((item) =>
-        item.model.toLowerCase().includes(searchQuery.toLowerCase())
+        item.modelName.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : items;
 
@@ -34,7 +34,7 @@ export default async function List({
                     : "text-zinc-700 dark:text-zinc-300"
                 }`}
               >
-                {item.model}
+                {item.modelName}
               </Link>
             </li>
           ))}

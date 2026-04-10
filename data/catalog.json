@@ -2,20 +2,36 @@
   "items": [
     {
       "id": "1",
-      "model": "Datsun 240Z Custom",
-      "year": 2021,
-      "openWindow": true,
+      "modelName": "Datsun 240Z Custom",
+      "carBrand": "Nissan",
+      "carModel": "240Z",
+      "carProductionYear": null,
+      "releaseYear": 2025,
+      "yearOnChassis": 2022,
+      "series": "Fast & Furious",
+      "color": "Orange",
+      "modelNumber": "HNT20",
+      "priceRange": "15-20",
+      "openWindow": false,
       "bigWing": false,
       "frontBoltPositionOnEdge": true,
-      "backBoltPositionOnEdge": false
+      "backBoltPositionOnEdge": true
     },
     {
       "id": "2",
-      "model": "90' Acura NSX",
-      "year": 2022,
+      "modelName": "90' Acura NSX",
+      "carBrand": "Acura",
+      "carModel": "NSX",
+      "carProductionYear": null,
+      "releaseYear": 2018,
+      "yearOnChassis": 2014,
+      "series": "",
+      "color": "Black",
+      "modelNumber": "CFH16",
+      "priceRange": "20-50",
       "openWindow": false,
       "bigWing": true,
-      "frontBoltPositionOnEdge": false,
+      "frontBoltPositionOnEdge": true,
       "backBoltPositionOnEdge": true
     }
   ]

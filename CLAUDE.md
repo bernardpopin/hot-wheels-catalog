@@ -30,17 +30,25 @@ The single domain type is `CatalogItem`, defined in `app/lib/catalog.ts`:
 
 ```ts
 export type CatalogItem = {
-  id: string;                      // Date.now().toString() — no UUID library
-  model: string;                   // e.g. "Datsun 240Z Custom"
-  year: number;                    // Hot Wheels release year, min 1968
-  openWindow: boolean;             // casting variant flag
-  bigWing: boolean;                // casting variant flag
-  frontBoltPositionOnEdge: boolean; // casting variant flag
-  backBoltPositionOnEdge: boolean;  // casting variant flag
+  id: string;                        // Date.now().toString() — no UUID library
+  modelName: string;                 // Hot Wheels model name, e.g. "Datsun 240Z Custom"
+  carBrand: string;                  // Real-world car manufacturer
+  carModel: string;                  // Real-world car model name
+  carProductionYear: number | null;  // Real-world car production year (1880–2030)
+  releaseYear: number;               // Hot Wheels release year, min 1968
+  yearOnChassis: number | null;      // Year stamped on the casting chassis
+  series: string;                    // Hot Wheels series name
+  color: string;                     // Paint color
+  modelNumber: string;               // Collector number
+  priceRange: string;                // e.g. "Main Line", "Premium"
+  openWindow: boolean;               // casting variant flag
+  bigWing: boolean;                  // casting variant flag
+  frontBoltPositionOnEdge: boolean;  // casting variant flag
+  backBoltPositionOnEdge: boolean;   // casting variant flag
 };
 ```
 
-The four boolean flags are Hot-Wheels-specific casting identifiers used to distinguish between versions of the same model.
+`FormState` (used by forms) is `Omit<CatalogItem, "id">`. The four boolean flags are Hot-Wheels-specific casting identifiers used to distinguish between versions of the same model.
 
 ## Storage
 
@@ -56,14 +64,24 @@ Read/write via Node.js `fs/promises` in `app/lib/catalog.ts` (`readCatalog()` / 
 
 ### Component split
 
-- **Server components** (no directive): `List`, `ModelDetail`, `TopBar`, `page.tsx` — call `readCatalog()` directly.
-- **Client components** (`"use client"`): `CatalogForm`, `Search`, `RemoveButton` — handle interactive state.
+- **Server components** (no directive): `List`, `TopBar`, `page.tsx` — call `readCatalog()` directly.
+- **Client components** (`"use client"`): `AddForm`, `EditForm`, `ModelDetail`, `DetailPanel`, `ItemFormFields`, `Search`, `RemoveButton` — handle interactive state.
+
+Key client components:
+- `DetailPanel` — toggles between `ModelDetail` (view) and `EditForm` (edit) using local `editing` state.
+- `ModelDetail` — displays all fields of a selected item; receives an `onEdit` callback prop that switches `DetailPanel` to edit mode.
+- `EditForm` — pre-fills with the current item's values, calls `updateCatalogItem`, then `router.refresh()` + `onDone()`.
+- `AddForm` — blank form that calls `addCatalogItem` and resets to initial state after save.
+- `ItemFormFields` — shared controlled-input component used by both `AddForm` and `EditForm`.
+- `useItemForm` — custom hook (`app/components/useItemForm.ts`) managing `FormState` with typed `handleChange` for text, number (supports empty → `null`), and checkbox inputs.
 
 ### Routing / UI state
 
 Single route at `/`. All UI state lives in URL search params:
-- `?selected=<id>` — shows `ModelDetail` for that item; absent means show `CatalogForm`.
+- `?selected=<id>` — shows `DetailPanel` (view/edit) for that item; absent means show `AddForm`.
 - `?q=<query>` — filters the sidebar list by model name.
+
+Edit mode is **not** in the URL — it is local state inside `DetailPanel`. Navigating away or refreshing exits edit mode.
 
 No dynamic route segments. No client-side data fetching — all reads happen in server components.
 
@@ -72,6 +90,7 @@ No dynamic route segments. No client-side data fetching — all reads happen in 
 Use Server Actions in `app/lib/actions.ts` (`"use server"`):
 - `addCatalogItem(item: Omit<CatalogItem, "id">)` — appends to JSON, calls `revalidatePath("/")`.
 - `deleteCatalogItem(id: string)` — removes item, calls `revalidatePath("/")` then `redirect("/")`.
+- `updateCatalogItem(id: string, item: Omit<CatalogItem, "id">)` — finds item by index, replaces in place, calls `revalidatePath("/")`, returns updated item. Caller is responsible for refreshing the UI (via `router.refresh()`).
 
 A REST API at `app/api/catalog/route.ts` also exists (`GET /api/catalog`, `POST /api/catalog`) but duplicates the Server Action logic rather than sharing it.
 

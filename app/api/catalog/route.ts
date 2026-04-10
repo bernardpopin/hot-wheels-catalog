@@ -13,8 +13,16 @@ export async function POST(request: NextRequest) {
 
   const newItem: CatalogItem = {
     id: Date.now().toString(),
-    model: body.model,
-    year: body.year,
+    modelName: body.modelName,
+    carBrand: body.carBrand,
+    carModel: body.carModel,
+    carProductionYear: body.carProductionYear,
+    releaseYear: body.releaseYear,
+    yearOnChassis: body.yearOnChassis,
+    series: body.series,
+    color: body.color,
+    modelNumber: body.modelNumber,
+    priceRange: body.priceRange,
     openWindow: body.openWindow,
     bigWing: body.bigWing,
     frontBoltPositionOnEdge: body.frontBoltPositionOnEdge,

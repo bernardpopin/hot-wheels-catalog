@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import TopBar from "@/app/components/TopBar";
 import List from "@/app/components/List";
 import Search from "@/app/components/Search";
-import CatalogForm from "@/app/components/CatalogForm";
-import ModelDetail from "@/app/components/ModelDetail";
+import AddForm from "@/app/components/AddForm";
+import DetailPanel from "@/app/components/DetailPanel";
 import { readCatalog } from "@/app/lib/catalog";
 
 export default async function Home({
@@ -31,9 +31,9 @@ export default async function Home({
           </aside>
           <div className="flex-1">
             {selectedItem ? (
-              <ModelDetail item={selectedItem} />
+              <DetailPanel item={selectedItem} />
             ) : (
-              <CatalogForm />
+              <AddForm />
             )}
           </div>
         </div>

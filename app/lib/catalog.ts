@@ -5,8 +5,16 @@ const DATA_FILE = path.join(process.cwd(), "data", "catalog.json");
 
 export type CatalogItem = {
   id: string;
-  model: string;
-  year: number;
+  modelName: string;
+  carBrand: string;
+  carModel: string;
+  carProductionYear: number | null;
+  releaseYear: number;
+  yearOnChassis: number | null;
+  series: string;
+  color: string;
+  modelNumber: string;
+  priceRange: string;
   openWindow: boolean;
   bigWing: boolean;
   frontBoltPositionOnEdge: boolean;

@@ -1,3 +1,5 @@
+"use client";
+
 import type { CatalogItem } from "@/app/lib/catalog";
 import { deleteCatalogItem } from "@/app/lib/actions";
 import RemoveButton from "@/app/components/RemoveButton";
@@ -11,19 +13,47 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function ModelDetail({ item }: { item: CatalogItem }) {
+export default function ModelDetail({
+  item,
+  onEdit,
+}: {
+  item: CatalogItem;
+  onEdit: () => void;
+}) {
   const deleteItem = deleteCatalogItem.bind(null, item.id);
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-          {item.model}
+          {item.modelName}
         </h2>
-        <RemoveButton action={deleteItem} />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onEdit}
+            className="rounded-full border border-zinc-300 px-4 py-1.5 text-sm font-medium text-zinc-700 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:text-zinc-100"
+          >
+            Edit
+          </button>
+          <RemoveButton action={deleteItem} />
+        </div>
       </div>
       <dl className="divide-y divide-zinc-100 dark:divide-zinc-800">
-        <Row label="Year" value={String(item.year)} />
+        <Row label="Car brand" value={item.carBrand || "—"} />
+        <Row label="Car model" value={item.carModel || "—"} />
+        <Row
+          label="Year of production of the car"
+          value={item.carProductionYear != null ? String(item.carProductionYear) : "—"}
+        />
+        <Row label="Release year" value={String(item.releaseYear)} />
+        <Row
+          label="Year on chassis"
+          value={item.yearOnChassis != null ? String(item.yearOnChassis) : "—"}
+        />
+        <Row label="Series" value={item.series || "—"} />
+        <Row label="Color" value={item.color || "—"} />
+        <Row label="Model number" value={item.modelNumber || "—"} />
+        <Row label="Price range" value={item.priceRange || "—"} />
         <Row label="Open window" value={item.openWindow ? "Yes" : "No"} />
         <Row label="Big wing" value={item.bigWing ? "Yes" : "No"} />
         <Row

@@ -29,3 +29,17 @@ export async function deleteCatalogItem(id: string): Promise<void> {
   revalidatePath("/");
   redirect("/");
 }
+
+export async function updateCatalogItem(
+  id: string,
+  item: Omit<CatalogItem, "id">
+): Promise<CatalogItem> {
+  const data = await readCatalog();
+  const index = data.items.findIndex((i) => i.id === id);
+  if (index === -1) throw new Error(`Item not found: ${id}`);
+  const updated = { id, ...item };
+  data.items[index] = updated;
+  await writeCatalog(data);
+  revalidatePath("/");
+  return updated;
+}
