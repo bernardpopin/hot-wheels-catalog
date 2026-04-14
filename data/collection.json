@@ -33,6 +33,23 @@
       "bigWing": true,
       "frontBoltPositionOnEdge": true,
       "backBoltPositionOnEdge": true
+    },
+    {
+      "id": "1776159774446",
+      "modelName": "Nissan Silvia S15",
+      "carBrand": "Nissan",
+      "carModel": "Silvia",
+      "carProductionYear": null,
+      "releaseYear": 2025,
+      "yearOnChassis": 2022,
+      "series": "Fast & Furious",
+      "color": "Blue",
+      "modelNumber": "HNR93",
+      "priceRange": "15-20",
+      "openWindow": false,
+      "bigWing": false,
+      "frontBoltPositionOnEdge": true,
+      "backBoltPositionOnEdge": true
     }
   ]
 }

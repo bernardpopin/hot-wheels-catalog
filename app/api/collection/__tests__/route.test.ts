@@ -1,18 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { CatalogItem } from "@/app/lib/catalog";
+import type { CollectionItem } from "@/app/lib/collection";
 
-vi.mock("@/app/lib/catalog", () => ({
-  readCatalog: vi.fn(),
-  writeCatalog: vi.fn(),
+vi.mock("@/app/lib/collection", () => ({
+  readCollection: vi.fn(),
+  writeCollection: vi.fn(),
 }));
 
-import { GET, POST } from "@/app/api/catalog/route";
-import { readCatalog, writeCatalog } from "@/app/lib/catalog";
+import { GET, POST } from "@/app/api/collection/route";
+import { readCollection, writeCollection } from "@/app/lib/collection";
 
-const mockReadCatalog = vi.mocked(readCatalog);
-const mockWriteCatalog = vi.mocked(writeCatalog);
+const mockReadCollection = vi.mocked(readCollection);
+const mockWriteCollection = vi.mocked(writeCollection);
 
-const item1: CatalogItem = {
+const item1: CollectionItem = {
   id: "1",
   modelName: "Datsun 240Z Custom",
   carBrand: "Nissan",
@@ -32,12 +32,12 @@ const item1: CatalogItem = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockWriteCatalog.mockResolvedValue(undefined);
+  mockWriteCollection.mockResolvedValue(undefined);
 });
 
-describe("GET /api/catalog", () => {
-  it("returns 200 with catalog items", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [item1] });
+describe("GET /api/collection", () => {
+  it("returns 200 with collection items", async () => {
+    mockReadCollection.mockResolvedValue({ items: [item1] });
 
     const response = await GET();
     const body = await response.json();
@@ -46,8 +46,8 @@ describe("GET /api/catalog", () => {
     expect(body).toEqual({ items: [item1] });
   });
 
-  it("returns an empty items array when catalog is empty", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [] });
+  it("returns an empty items array when collection is empty", async () => {
+    mockReadCollection.mockResolvedValue({ items: [] });
 
     const response = await GET();
     const body = await response.json();
@@ -56,7 +56,7 @@ describe("GET /api/catalog", () => {
   });
 });
 
-describe("POST /api/catalog", () => {
+describe("POST /api/collection", () => {
   const newItemInput = {
     modelName: "Land Rover Defender 90",
     carBrand: "Land Rover",
@@ -79,7 +79,7 @@ describe("POST /api/catalog", () => {
   }
 
   it("returns 201 with the created item", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [] });
+    mockReadCollection.mockResolvedValue({ items: [] });
 
     const response = await POST(makeRequest(newItemInput) as never);
     const body = await response.json();
@@ -89,18 +89,18 @@ describe("POST /api/catalog", () => {
     expect(typeof body.id).toBe("string");
   });
 
-  it("persists the new item to the catalog", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [item1] });
+  it("persists the new item to the collection", async () => {
+    mockReadCollection.mockResolvedValue({ items: [item1] });
 
     await POST(makeRequest(newItemInput) as never);
 
-    const writtenData = mockWriteCatalog.mock.calls[0][0];
+    const writtenData = mockWriteCollection.mock.calls[0][0];
     expect(writtenData.items).toHaveLength(2);
     expect(writtenData.items[1]).toMatchObject(newItemInput);
   });
 
   it("includes all boolean variant fields in the created item", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [] });
+    mockReadCollection.mockResolvedValue({ items: [] });
 
     const input = {
       ...newItemInput,

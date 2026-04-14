@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addCatalogItem } from "@/app/lib/actions";
+import { addCollectionItem } from "@/app/lib/actions";
 import { useItemForm, type FormState } from "@/app/components/useItemForm";
 import ItemFormFields from "@/app/components/ItemFormFields";
 
@@ -29,7 +29,7 @@ export default function AddForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    await addCatalogItem(form);
+    await addCollectionItem(form);
     setForm(initialState);
     setSaving(false);
   }

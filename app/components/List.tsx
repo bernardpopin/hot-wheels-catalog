@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { readCatalog } from "@/app/lib/catalog";
+import { readCollection } from "@/app/lib/collection";
 
 export default async function List({
   selectedId,
@@ -8,7 +8,7 @@ export default async function List({
   selectedId?: string;
   searchQuery?: string;
 }) {
-  const { items } = await readCatalog();
+  const { items } = await readCollection();
 
   const filtered = searchQuery
     ? items.filter((item) =>

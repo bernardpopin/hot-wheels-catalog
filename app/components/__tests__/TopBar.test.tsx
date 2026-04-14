@@ -13,13 +13,20 @@ vi.mock("next/link", () => ({
 describe("TopBar", () => {
   it("renders the app name", () => {
     render(<TopBar />);
-    expect(screen.getByText("Hot Wheels Catalog")).toBeInTheDocument();
+    expect(screen.getByText("Hot Wheels Car Collection")).toBeInTheDocument();
   });
 
-  it("renders the Add model link pointing to /", () => {
+  it("renders the Add a car link pointing to /", () => {
     render(<TopBar />);
-    const link = screen.getByRole("link", { name: "Add model" });
+    const link = screen.getByRole("link", { name: "Add a car" });
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute("href", "/");
+  });
+
+  it("renders the AI Assistant link pointing to /?assistant=true", () => {
+    render(<TopBar />);
+    const link = screen.getByRole("link", { name: "AI Assistant" });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute("href", "/?assistant=true");
   });
 });

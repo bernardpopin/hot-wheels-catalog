@@ -1,9 +1,9 @@
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 
-const DATA_FILE = path.join(process.cwd(), "data", "catalog.json");
+const DATA_FILE = path.join(process.cwd(), "data", "collection.json");
 
-export type CatalogItem = {
+export type CollectionItem = {
   id: string;
   modelName: string;
   carBrand: string;
@@ -21,15 +21,15 @@ export type CatalogItem = {
   backBoltPositionOnEdge: boolean;
 };
 
-type CatalogData = {
-  items: CatalogItem[];
+type CollectionData = {
+  items: CollectionItem[];
 };
 
-export async function readCatalog(): Promise<CatalogData> {
+export async function readCollection(): Promise<CollectionData> {
   const raw = await readFile(DATA_FILE, "utf-8");
-  return JSON.parse(raw) as CatalogData;
+  return JSON.parse(raw) as CollectionData;
 }
 
-export async function writeCatalog(data: CatalogData): Promise<void> {
+export async function writeCollection(data: CollectionData): Promise<void> {
   await writeFile(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
 }

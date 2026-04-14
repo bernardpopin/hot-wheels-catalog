@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { CatalogItem } from "@/app/lib/catalog";
+import type { CollectionItem } from "@/app/lib/collection";
 
 vi.mock("next/link", () => ({
   default: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) => (
@@ -10,16 +10,16 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-vi.mock("@/app/lib/catalog", () => ({
-  readCatalog: vi.fn(),
+vi.mock("@/app/lib/collection", () => ({
+  readCollection: vi.fn(),
 }));
 
 import List from "@/app/components/List";
-import { readCatalog } from "@/app/lib/catalog";
+import { readCollection } from "@/app/lib/collection";
 
-const mockReadCatalog = vi.mocked(readCatalog);
+const mockReadCollection = vi.mocked(readCollection);
 
-const item1: CatalogItem = {
+const item1: CollectionItem = {
   id: "1",
   modelName: "Datsun 240Z Custom",
   carBrand: "Nissan",
@@ -37,7 +37,7 @@ const item1: CatalogItem = {
   backBoltPositionOnEdge: false,
 };
 
-const item2: CatalogItem = {
+const item2: CollectionItem = {
   id: "2",
   modelName: "90' Acura NSX",
   carBrand: "Acura",
@@ -66,7 +66,7 @@ async function renderList(props: { selectedId?: string; searchQuery?: string }) 
 
 describe("List", () => {
   it("renders all items when no search query", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [item1, item2] });
+    mockReadCollection.mockResolvedValue({ items: [item1, item2] });
 
     await renderList({});
 
@@ -75,7 +75,7 @@ describe("List", () => {
   });
 
   it("each item links to /?selected=<id>", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [item1] });
+    mockReadCollection.mockResolvedValue({ items: [item1] });
 
     await renderList({});
 
@@ -83,8 +83,8 @@ describe("List", () => {
     expect(link).toHaveAttribute("href", "/?selected=1");
   });
 
-  it("shows 'No models yet.' when catalog is empty and no query", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [] });
+  it("shows 'No models yet.' when collection is empty and no query", async () => {
+    mockReadCollection.mockResolvedValue({ items: [] });
 
     await renderList({});
 
@@ -92,7 +92,7 @@ describe("List", () => {
   });
 
   it("filters items by searchQuery (case-insensitive)", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [item1, item2] });
+    mockReadCollection.mockResolvedValue({ items: [item1, item2] });
 
     await renderList({ searchQuery: "datsun" });
 
@@ -101,7 +101,7 @@ describe("List", () => {
   });
 
   it("shows 'No results.' when search matches nothing", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [item1, item2] });
+    mockReadCollection.mockResolvedValue({ items: [item1, item2] });
 
     await renderList({ searchQuery: "ferrari" });
 
@@ -109,7 +109,7 @@ describe("List", () => {
   });
 
   it("highlights the selected item", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [item1, item2] });
+    mockReadCollection.mockResolvedValue({ items: [item1, item2] });
 
     await renderList({ selectedId: "1" });
 
@@ -118,7 +118,7 @@ describe("List", () => {
   });
 
   it("does not highlight unselected items", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [item1, item2] });
+    mockReadCollection.mockResolvedValue({ items: [item1, item2] });
 
     await renderList({ selectedId: "1" });
 
@@ -127,7 +127,7 @@ describe("List", () => {
   });
 
   it("shows all items when searchQuery is an empty string", async () => {
-    mockReadCatalog.mockResolvedValue({ items: [item1, item2] });
+    mockReadCollection.mockResolvedValue({ items: [item1, item2] });
 
     await renderList({ searchQuery: "" });
 

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import DetailPanel from "@/app/components/DetailPanel";
-import type { CatalogItem } from "@/app/lib/catalog";
+import type { CollectionItem } from "@/app/lib/collection";
 
 vi.mock("@/app/components/ModelDetail", () => ({
   default: ({ onEdit }: { onEdit: () => void }) => (
@@ -26,7 +26,7 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-const item: CatalogItem = {
+const item: CollectionItem = {
   id: "1",
   modelName: "Datsun 240Z Custom",
   carBrand: "Nissan",

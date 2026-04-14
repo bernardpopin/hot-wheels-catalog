@@ -54,7 +54,7 @@ describe("RemoveButton", () => {
     render(<RemoveButton action={vi.fn()} />);
     await userEvent.click(screen.getByRole("button", { name: "Remove" }));
     expect(
-      screen.getByText("Are you sure you want to remove this model?")
+      screen.getByText("Are you sure you want to remove this car?")
     ).toBeInTheDocument();
   });
 });

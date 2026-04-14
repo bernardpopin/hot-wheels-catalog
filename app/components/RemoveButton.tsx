@@ -24,7 +24,7 @@ export default function RemoveButton({
         className="m-auto rounded-xl border border-zinc-200 bg-white p-6 shadow-lg backdrop:bg-black/40 dark:border-zinc-800 dark:bg-zinc-950"
       >
         <p className="text-sm text-zinc-700 dark:text-zinc-300">
-          Are you sure you want to remove this model?
+          Are you sure you want to remove this car?
         </p>
         <div className="mt-5 flex justify-end gap-3">
           <button

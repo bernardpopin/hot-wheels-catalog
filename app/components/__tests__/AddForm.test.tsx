@@ -4,16 +4,16 @@ import userEvent from "@testing-library/user-event";
 import AddForm from "@/app/components/AddForm";
 
 vi.mock("@/app/lib/actions", () => ({
-  addCatalogItem: vi.fn(),
+  addCollectionItem: vi.fn(),
 }));
 
-import { addCatalogItem } from "@/app/lib/actions";
+import { addCollectionItem } from "@/app/lib/actions";
 
-const mockAddCatalogItem = vi.mocked(addCatalogItem);
+const mockAddCollectionItem = vi.mocked(addCollectionItem);
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAddCatalogItem.mockResolvedValue({
+  mockAddCollectionItem.mockResolvedValue({
     id: "new",
     modelName: "",
     carBrand: "",
@@ -109,7 +109,7 @@ describe("AddForm", () => {
     expect(checkbox).toBeChecked();
   });
 
-  it("calls addCatalogItem with the correct values on submit", async () => {
+  it("calls addCollectionItem with the correct values on submit", async () => {
     render(<AddForm />);
 
     await userEvent.type(screen.getByLabelText("Model name"), "Land Rover Defender 90");
@@ -123,7 +123,7 @@ describe("AddForm", () => {
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() => {
-      expect(mockAddCatalogItem).toHaveBeenCalledWith(
+      expect(mockAddCollectionItem).toHaveBeenCalledWith(
         expect.objectContaining({
           modelName: "Land Rover Defender 90",
           carBrand: "Land Rover",
@@ -138,7 +138,7 @@ describe("AddForm", () => {
 
   it("shows 'Saving…' while the submission is in flight", async () => {
     let resolveAdd!: () => void;
-    mockAddCatalogItem.mockReturnValue(
+    mockAddCollectionItem.mockReturnValue(
       new Promise<never>((resolve) => { resolveAdd = resolve as () => void; })
     );
 

@@ -4,19 +4,26 @@ import List from "@/app/components/List";
 import Search from "@/app/components/Search";
 import AddForm from "@/app/components/AddForm";
 import DetailPanel from "@/app/components/DetailPanel";
-import { readCatalog } from "@/app/lib/catalog";
+import AgentChat from "@/app/components/AgentChat";
+import { readCollection } from "@/app/lib/collection";
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ selected?: string; q?: string }>;
+  searchParams: Promise<{ selected?: string; q?: string; assistant?: string }>;
 }) {
-  const { selected, q } = await searchParams;
+  const { selected, q, assistant } = await searchParams;
 
-  const { items } = await readCatalog();
+  const { items } = await readCollection();
   const selectedItem = selected
     ? (items.find((item) => item.id === selected) ?? null)
     : null;
+
+  function renderPanel() {
+    if (assistant === "true") return <AgentChat />;
+    if (selectedItem) return <DetailPanel item={selectedItem} />;
+    return <AddForm />;
+  }
 
   return (
     <>
@@ -29,13 +36,7 @@ export default async function Home({
             </Suspense>
             <List selectedId={selected} searchQuery={q} />
           </aside>
-          <div className="flex-1">
-            {selectedItem ? (
-              <DetailPanel item={selectedItem} />
-            ) : (
-              <AddForm />
-            )}
-          </div>
+          <div className="flex-1">{renderPanel()}</div>
         </div>
       </main>
     </>

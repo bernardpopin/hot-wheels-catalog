@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { CatalogItem } from "@/app/lib/catalog";
+import type { CollectionItem } from "@/app/lib/collection";
 
-export type FormState = Omit<CatalogItem, "id">;
+export type FormState = Omit<CollectionItem, "id">;
 
 export function useItemForm(initial: FormState) {
   const [form, setForm] = useState<FormState>(initial);

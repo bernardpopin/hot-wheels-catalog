@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateCatalogItem } from "@/app/lib/actions";
+import { updateCollectionItem } from "@/app/lib/actions";
 import { useItemForm } from "@/app/components/useItemForm";
 import ItemFormFields from "@/app/components/ItemFormFields";
-import type { CatalogItem } from "@/app/lib/catalog";
+import type { CollectionItem } from "@/app/lib/collection";
 
 export default function EditForm({
   item,
   onDone,
 }: {
-  item: CatalogItem;
+  item: CollectionItem;
   onDone: () => void;
 }) {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function EditForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    await updateCatalogItem(id, form);
+    await updateCollectionItem(id, form);
     router.refresh();
     onDone();
   }

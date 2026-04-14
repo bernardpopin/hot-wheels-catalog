@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { CatalogItem } from "@/app/lib/catalog";
+import type { CollectionItem } from "@/app/lib/collection";
 
 const { mockReadFile, mockWriteFile } = vi.hoisted(() => ({
   mockReadFile: vi.fn(),
@@ -12,9 +12,9 @@ vi.mock("fs/promises", () => ({
   default: { readFile: mockReadFile, writeFile: mockWriteFile },
 }));
 
-import { readCatalog, writeCatalog } from "@/app/lib/catalog";
+import { readCollection, writeCollection } from "@/app/lib/collection";
 
-const item1: CatalogItem = {
+const item1: CollectionItem = {
   id: "1",
   modelName: "Datsun 240Z Custom",
   carBrand: "Nissan",
@@ -32,7 +32,7 @@ const item1: CatalogItem = {
   backBoltPositionOnEdge: false,
 };
 
-const item2: CatalogItem = {
+const item2: CollectionItem = {
   id: "2",
   modelName: "90' Acura NSX",
   carBrand: "Acura",
@@ -54,20 +54,20 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe("readCatalog", () => {
-  it("returns parsed catalog data", async () => {
+describe("readCollection", () => {
+  it("returns parsed collection data", async () => {
     const data = { items: [item1, item2] };
     mockReadFile.mockResolvedValue(JSON.stringify(data));
 
-    const result = await readCatalog();
+    const result = await readCollection();
 
     expect(result).toEqual(data);
   });
 
-  it("returns empty items array when catalog is empty", async () => {
+  it("returns empty items array when collection is empty", async () => {
     mockReadFile.mockResolvedValue(JSON.stringify({ items: [] }));
 
-    const result = await readCatalog();
+    const result = await readCollection();
 
     expect(result.items).toHaveLength(0);
   });
@@ -77,22 +77,22 @@ describe("readCatalog", () => {
       Object.assign(new Error("ENOENT"), { code: "ENOENT" })
     );
 
-    await expect(readCatalog()).rejects.toThrow("ENOENT");
+    await expect(readCollection()).rejects.toThrow("ENOENT");
   });
 
   it("throws when the file contains invalid JSON", async () => {
     mockReadFile.mockResolvedValue("not json");
 
-    await expect(readCatalog()).rejects.toThrow(SyntaxError);
+    await expect(readCollection()).rejects.toThrow(SyntaxError);
   });
 });
 
-describe("writeCatalog", () => {
+describe("writeCollection", () => {
   it("writes JSON with 2-space indentation", async () => {
     mockWriteFile.mockResolvedValue(undefined);
     const data = { items: [item1] };
 
-    await writeCatalog(data);
+    await writeCollection(data);
 
     expect(mockWriteFile).toHaveBeenCalledOnce();
     const [, content, encoding] = mockWriteFile.mock.calls[0];
@@ -103,7 +103,7 @@ describe("writeCatalog", () => {
   it("writes an empty items array", async () => {
     mockWriteFile.mockResolvedValue(undefined);
 
-    await writeCatalog({ items: [] });
+    await writeCollection({ items: [] });
 
     const [, content] = mockWriteFile.mock.calls[0];
     expect(JSON.parse(content as string)).toEqual({ items: [] });
@@ -112,7 +112,7 @@ describe("writeCatalog", () => {
   it("throws when writeFile fails", async () => {
     mockWriteFile.mockRejectedValue(new Error("disk full"));
 
-    await expect(writeCatalog({ items: [item1] })).rejects.toThrow("disk full");
+    await expect(writeCollection({ items: [item1] })).rejects.toThrow("disk full");
   });
 
   it("round-trips: write then read returns the same data", async () => {
@@ -124,8 +124,8 @@ describe("writeCatalog", () => {
     });
     mockReadFile.mockImplementation(async () => stored);
 
-    await writeCatalog(data);
-    const result = await readCatalog();
+    await writeCollection(data);
+    const result = await readCollection();
 
     expect(result).toEqual(data);
   });

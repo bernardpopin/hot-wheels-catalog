@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { CatalogItem } from "@/app/lib/catalog";
+import type { CollectionItem } from "@/app/lib/collection";
 import ModelDetail from "@/app/components/ModelDetail";
 import EditForm from "@/app/components/EditForm";
 
-export default function DetailPanel({ item }: { item: CatalogItem }) {
+export default function DetailPanel({ item }: { item: CollectionItem }) {
   const [editing, setEditing] = useState(false);
 
   if (editing) {

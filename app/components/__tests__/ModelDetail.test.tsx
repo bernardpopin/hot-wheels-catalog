@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ModelDetail from "@/app/components/ModelDetail";
-import type { CatalogItem } from "@/app/lib/catalog";
+import type { CollectionItem } from "@/app/lib/collection";
 
 vi.mock("@/app/lib/actions", () => ({
-  deleteCatalogItem: vi.fn(),
+  deleteCollectionItem: vi.fn(),
 }));
 
 vi.mock("@/app/components/RemoveButton", () => ({
@@ -20,7 +20,7 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-const baseItem: CatalogItem = {
+const baseItem: CollectionItem = {
   id: "42",
   modelName: "Datsun 240Z Custom",
   carBrand: "Nissan",
@@ -84,7 +84,7 @@ describe("ModelDetail", () => {
   });
 
   it("renders 'Yes' for all boolean fields when all are true", () => {
-    const allTrue: CatalogItem = {
+    const allTrue: CollectionItem = {
       ...baseItem,
       openWindow: true,
       bigWing: true,
@@ -97,7 +97,7 @@ describe("ModelDetail", () => {
   });
 
   it("renders 'No' for all boolean fields when all are false", () => {
-    const allFalse: CatalogItem = {
+    const allFalse: CollectionItem = {
       ...baseItem,
       openWindow: false,
       bigWing: false,

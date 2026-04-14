@@ -1,17 +1,17 @@
 import type { NextRequest } from "next/server";
-import { readCatalog, writeCatalog } from "@/app/lib/catalog";
-import type { CatalogItem } from "@/app/lib/catalog";
+import { readCollection, writeCollection } from "@/app/lib/collection";
+import type { CollectionItem } from "@/app/lib/collection";
 
 export async function GET() {
-  const data = await readCatalog();
+  const data = await readCollection();
   return Response.json(data);
 }
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as Omit<CatalogItem, "id">;
-  const data = await readCatalog();
+  const body = (await request.json()) as Omit<CollectionItem, "id">;
+  const data = await readCollection();
 
-  const newItem: CatalogItem = {
+  const newItem: CollectionItem = {
     id: Date.now().toString(),
     modelName: body.modelName,
     carBrand: body.carBrand,
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   };
 
   data.items.push(newItem);
-  await writeCatalog(data);
+  await writeCollection(data);
 
   return Response.json(newItem, { status: 201 });
 }

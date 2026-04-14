@@ -2,24 +2,24 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import EditForm from "@/app/components/EditForm";
-import type { CatalogItem } from "@/app/lib/catalog";
+import type { CollectionItem } from "@/app/lib/collection";
 
 vi.mock("@/app/lib/actions", () => ({
-  updateCatalogItem: vi.fn(),
+  updateCollectionItem: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(),
 }));
 
-import { updateCatalogItem } from "@/app/lib/actions";
+import { updateCollectionItem } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
 
-const mockUpdateCatalogItem = vi.mocked(updateCatalogItem);
+const mockUpdateCollectionItem = vi.mocked(updateCollectionItem);
 const mockUseRouter = vi.mocked(useRouter);
 const mockRefresh = vi.fn();
 
-const baseItem: CatalogItem = {
+const baseItem: CollectionItem = {
   id: "42",
   modelName: "Datsun 240Z Custom",
   carBrand: "Nissan",
@@ -40,7 +40,7 @@ const baseItem: CatalogItem = {
 beforeEach(() => {
   vi.clearAllMocks();
   mockUseRouter.mockReturnValue({ refresh: mockRefresh } as unknown as ReturnType<typeof useRouter>);
-  mockUpdateCatalogItem.mockResolvedValue(baseItem);
+  mockUpdateCollectionItem.mockResolvedValue(baseItem);
 });
 
 describe("EditForm", () => {
@@ -88,15 +88,15 @@ describe("EditForm", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 
-  it("calls onDone when Cancel is clicked without calling updateCatalogItem", async () => {
+  it("calls onDone when Cancel is clicked without calling updateCollectionItem", async () => {
     const onDone = vi.fn();
     render(<EditForm item={baseItem} onDone={onDone} />);
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     expect(onDone).toHaveBeenCalledOnce();
-    expect(mockUpdateCatalogItem).not.toHaveBeenCalled();
+    expect(mockUpdateCollectionItem).not.toHaveBeenCalled();
   });
 
-  it("calls updateCatalogItem with correct id and updated values on submit", async () => {
+  it("calls updateCollectionItem with correct id and updated values on submit", async () => {
     const onDone = vi.fn();
     render(<EditForm item={baseItem} onDone={onDone} />);
 
@@ -108,7 +108,7 @@ describe("EditForm", () => {
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() => {
-      expect(mockUpdateCatalogItem).toHaveBeenCalledWith(
+      expect(mockUpdateCollectionItem).toHaveBeenCalledWith(
         "42",
         expect.objectContaining({
           modelName: "Updated Name",
@@ -137,7 +137,7 @@ describe("EditForm", () => {
 
   it("shows 'Saving…' while submission is in flight", async () => {
     let resolveUpdate!: () => void;
-    mockUpdateCatalogItem.mockReturnValue(
+    mockUpdateCollectionItem.mockReturnValue(
       new Promise<never>((resolve) => {
         resolveUpdate = resolve as () => void;
       })

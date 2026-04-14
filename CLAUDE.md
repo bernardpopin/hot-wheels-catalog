@@ -7,14 +7,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run setup     # Install dependencies and initialize Claude.
-npm run dev       # Start dev server (Turbopack, default in Next.js 16)
-npm run build     # Production build (Turbopack)
-npm start         # Start production server
-npm run lint      # Run ESLint
+npm run setup        # Install dependencies and initialize Claude.
+npm run dev          # Start dev server (Turbopack, default in Next.js 16)
+npm run build        # Production build (Turbopack)
+npm start            # Start production server
+npm run lint         # Run ESLint
+npm test             # Run all tests (Vitest)
+npm run test:watch   # Run tests in watch mode
 ```
 
-No test framework is configured yet.
+Tests use **Vitest** with **React Testing Library** (`@testing-library/react`, `@testing-library/user-event`, `@testing-library/jest-dom`). Test files live in `__tests__/` directories next to source files and are named `[filename].test.ts(x)`. Use `@/` imports in test files.
 
 ## Architecture
 
@@ -26,10 +28,10 @@ No test framework is configured yet.
 
 ## Data Model
 
-The single domain type is `CatalogItem`, defined in `app/lib/catalog.ts`:
+The single domain type is `CollectionItem`, defined in `app/lib/collection.ts`:
 
 ```ts
-export type CatalogItem = {
+export type CollectionItem = {
   id: string;                        // Date.now().toString() — no UUID library
   modelName: string;                 // Hot Wheels model name, e.g. "Datsun 240Z Custom"
   carBrand: string;                  // Real-world car manufacturer
@@ -48,51 +50,55 @@ export type CatalogItem = {
 };
 ```
 
-`FormState` (used by forms) is `Omit<CatalogItem, "id">`. The four boolean flags are Hot-Wheels-specific casting identifiers used to distinguish between versions of the same model.
+`FormState` (used by forms) is `Omit<CollectionItem, "id">`. The four boolean flags are Hot-Wheels-specific casting identifiers used to distinguish between versions of the same model.
 
 ## Storage
 
-No database or ORM. Storage is a plain JSON file at `data/catalog.json`:
+No database or ORM. Storage is a plain JSON file at `data/collection.json`:
 
 ```json
-{ "items": [ ...CatalogItem ] }
+{ "items": [ ...CollectionItem ] }
 ```
 
-Read/write via Node.js `fs/promises` in `app/lib/catalog.ts` (`readCatalog()` / `writeCatalog()`). Path resolved with `process.cwd()` — server-side only, not edge-compatible. No caching layer, no migrations, no runtime validation beyond TypeScript types.
+Read/write via Node.js `fs/promises` in `app/lib/collection.ts` (`readCollection()` / `writeCollection()`). Path resolved with `process.cwd()` — server-side only, not edge-compatible. No caching layer, no migrations, no runtime validation beyond TypeScript types.
 
 ## Project Conventions
 
 ### Component split
 
-- **Server components** (no directive): `List`, `TopBar`, `page.tsx` — call `readCatalog()` directly.
-- **Client components** (`"use client"`): `AddForm`, `EditForm`, `ModelDetail`, `DetailPanel`, `ItemFormFields`, `Search`, `RemoveButton` — handle interactive state.
+- **Server components** (no directive): `List`, `TopBar`, `page.tsx` — call `readCollection()` directly.
+- **Client components** (`"use client"`): `AddForm`, `EditForm`, `ModelDetail`, `DetailPanel`, `ItemFormFields`, `Search`, `RemoveButton`, `AgentChat` — handle interactive state.
 
 Key client components:
 - `DetailPanel` — toggles between `ModelDetail` (view) and `EditForm` (edit) using local `editing` state.
 - `ModelDetail` — displays all fields of a selected item; receives an `onEdit` callback prop that switches `DetailPanel` to edit mode.
-- `EditForm` — pre-fills with the current item's values, calls `updateCatalogItem`, then `router.refresh()` + `onDone()`.
-- `AddForm` — blank form that calls `addCatalogItem` and resets to initial state after save.
+- `EditForm` — pre-fills with the current item's values, calls `updateCollectionItem`, then `router.refresh()` + `onDone()`.
+- `AddForm` — blank form that calls `addCollectionItem` and resets to initial state after save.
 - `ItemFormFields` — shared controlled-input component used by both `AddForm` and `EditForm`.
 - `useItemForm` — custom hook (`app/components/useItemForm.ts`) managing `FormState` with typed `handleChange` for text, number (supports empty → `null`), and checkbox inputs.
+- `AgentChat` — AI chat UI. POSTs `{ message, history }` to `POST /api/chat`, which proxies to an n8n webhook. Reads reply from `data.output ?? data.response ?? data.message`.
 
 ### Routing / UI state
 
 Single route at `/`. All UI state lives in URL search params:
 - `?selected=<id>` — shows `DetailPanel` (view/edit) for that item; absent means show `AddForm`.
 - `?q=<query>` — filters the sidebar list by model name.
+- `?assistant=true` — shows `AgentChat` instead of the item panel.
 
 Edit mode is **not** in the URL — it is local state inside `DetailPanel`. Navigating away or refreshing exits edit mode.
 
-No dynamic route segments. No client-side data fetching — all reads happen in server components.
+No dynamic route segments. Collection reads happen in server components. `AgentChat` is the exception: it fetches client-side via `POST /api/chat`.
 
 ### Mutations
 
 Use Server Actions in `app/lib/actions.ts` (`"use server"`):
-- `addCatalogItem(item: Omit<CatalogItem, "id">)` — appends to JSON, calls `revalidatePath("/")`.
-- `deleteCatalogItem(id: string)` — removes item, calls `revalidatePath("/")` then `redirect("/")`.
-- `updateCatalogItem(id: string, item: Omit<CatalogItem, "id">)` — finds item by index, replaces in place, calls `revalidatePath("/")`, returns updated item. Caller is responsible for refreshing the UI (via `router.refresh()`).
+- `addCollectionItem(item: Omit<CollectionItem, "id">)` — appends to JSON, calls `revalidatePath("/")`.
+- `deleteCollectionItem(id: string)` — removes item, calls `revalidatePath("/")` then `redirect("/")`.
+- `updateCollectionItem(id: string, item: Omit<CollectionItem, "id">)` — finds item by index, replaces in place, calls `revalidatePath("/")`, returns updated item. Caller is responsible for refreshing the UI (via `router.refresh()`).
 
-A REST API at `app/api/catalog/route.ts` also exists (`GET /api/catalog`, `POST /api/catalog`) but duplicates the Server Action logic rather than sharing it.
+A REST API at `app/api/collection/route.ts` also exists (`GET /api/collection`, `POST /api/collection`) but duplicates the Server Action logic rather than sharing it.
+
+`POST /api/chat` (`app/api/chat/route.ts`) proxies chat messages to an n8n webhook. It reads the `N8N_WEBHOOK_URL` env var (returns 500 if unset), forwards `{ message, history, collection }` to the webhook, and streams the response status and body back to the caller.
 
 ### Styling
 
@@ -103,7 +109,7 @@ A REST API at `app/api/catalog/route.ts` also exists (`GET /api/catalog`, `POST 
 
 ### Path alias
 
-`@/*` maps to the project root, e.g. `import { readCatalog } from "@/app/lib/catalog"`.
+`@/*` maps to the project root, e.g. `import { readCollection } from "@/app/lib/collection"`.
 
 ### Claude Code hooks
 

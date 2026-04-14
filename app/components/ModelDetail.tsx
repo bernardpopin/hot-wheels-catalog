@@ -1,7 +1,7 @@
 "use client";
 
-import type { CatalogItem } from "@/app/lib/catalog";
-import { deleteCatalogItem } from "@/app/lib/actions";
+import type { CollectionItem } from "@/app/lib/collection";
+import { deleteCollectionItem } from "@/app/lib/actions";
 import RemoveButton from "@/app/components/RemoveButton";
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -17,10 +17,10 @@ export default function ModelDetail({
   item,
   onEdit,
 }: {
-  item: CatalogItem;
+  item: CollectionItem;
   onEdit: () => void;
 }) {
-  const deleteItem = deleteCatalogItem.bind(null, item.id);
+  const deleteItem = deleteCollectionItem.bind(null, item.id);
 
   return (
     <div className="flex flex-col gap-6">
