@@ -54,33 +54,41 @@ Step 3 — Add the AI Agent
 
   1. Click "+" after Webhook, search for "AI Agent"
   2. In the AI Agent node settings:
-    Source for Prompt (User Message): choose "Define below"
-    Prompt (User Message): click the expression editor {} and enter:
+    
+     Source for Prompt (User Message): choose "Define below".
 
-    ```js
-    {{ $json.body.message }}
-    ```
+     Prompt (User Message): click the expression editor {} and enter:
 
-    System Message: click the expression editor and enter:
+     ```
+     {{ $json.body.message }}
+     ```
 
-    ```js
-    You are a helpful assistant for a Hot Wheels car collection. Answer questions based on the collection data provided below.
-    Collection (JSON):
-    {{ JSON.stringify($json.body.collection) }}
-    ```
+     System Message: click the expression editor and enter:
 
-    Include conversation history: if the field exists, you can pass (This depends on your n8n version — skip if not available.):
+     ```
+     You are a helpful assistant for a Hot Wheels car collection. Answer questions based on the collection data provided below.
+     
+     Collection (JSON):
+     {{ JSON.stringify($json.body.collection) }}
+     ```
 
-    ```js
-    {{ $json.body.history }}
-    ```
+     Include conversation history: if the field exists, you can pass (This depends on your n8n version — skip if not available.):
+
+     ```
+     {{ $json.body.history }}
+     ```
 
 Step 4 — Add the Ollama Chat Model
   
   1. Click "+" under AI Agent for Chat Model, search for "Ollama Chat Model"
-  2. Set Base URL to http://host.docker.internal:11434 (default Ollama address)
-  3. Set Model to the one you have pulled, e.g. llama3.2, mistral, qwen2.5, etc.
-  4. Optionally set Temperature (0.3–0.7 works well for Q&A)
+  2. Set Base URL to default Ollama address
+
+     ```
+     http://host.docker.internal:11434
+     ```
+     
+  4. Set Model to the one you have pulled, e.g. llama3.2, mistral, qwen2.5, etc.
+  5. Optionally set Temperature (0.3–0.7 works well for Q&A)
 
 Step 5 — Add the Respond to Webhook
 
@@ -88,11 +96,11 @@ Step 5 — Add the Respond to Webhook
   2. Set Respond With to "JSON"
   3. In the Response Body field, enter:
 
-  ```js
-  { "output": {{ JSON.stringify($json.output) }} }
-  ```
+     ```
+     { "output": {{ JSON.stringify($json.output) }} }
+     ```
 
-  ▎ If $json.output is empty after testing, try $json.response or $json.text — the field name depends on your n8n + LangChain version.
+     ▎ If $json.output is empty after testing, try $json.response or $json.text — the field name depends on your n8n + LangChain version.
 
 Step 6 — Connect the nodes
 
@@ -103,7 +111,11 @@ Step 7 — Test it
 
   1. Click "Execute workflow" in n8n to activate the test listener
   2. Add the test webhook URL to .env.local:
-  N8N_WEBHOOK_URL=http://localhost:5678/webhook-test/hot-wheels-assistant
+
+     ```
+     N8N_WEBHOOK_URL=http://localhost:5678/webhook-test/hot-wheels-assistant
+     ```
+     
   4. Restart the dev server (npm run dev) so it picks up the env variable
   5. Click "AI Assistant" in the app and send a message — n8n should show the execution in real time
 
