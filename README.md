@@ -56,18 +56,26 @@ Step 3 — Add the AI Agent
   2. In the AI Agent node settings:
     - Source for Prompt (User Message): choose "Define below"                                                                                                   
     - Prompt (User Message): click the expression editor {} and enter:
+
     ```bash
     {{ $json.body.message }}
     ```
+
     - System Message: click the expression editor and enter:
+
     ```bash
     You are a helpful assistant for a Hot Wheels car collection. Answer questions based on the collection data provided below.
 
     Collection (JSON):
     {{ JSON.stringify($json.body.collection) }}
     ```
+
     - Include conversation history: if the field exists, you can pass:
+
+    ```bash
     {{ $json.body.history }}
+    ```
+
     - (This depends on your n8n version — skip if not available.)
 
 Step 4 — Add the Ollama Chat Model
@@ -82,18 +90,18 @@ Step 5 — Add the Respond to Webhook
   1. Click "+" after AI Agent, search for "Respond to Webhook"
   2. Set Respond With to "JSON"
   3. In the Response Body field, enter:
+
   ```bash
   { "output": {{ JSON.stringify($json.output) }} }
   ```
+  
   ▎ If $json.output is empty after testing, try $json.response or $json.text — the field name depends on your n8n + LangChain version.
 
 Step 6 — Connect the nodes
 
   The final flow should look like:
 
-  [Webhook] → [AI Agent] → [Respond to Webhook]
-                  ↑
-          [Ollama Chat Model]
+  [Webhook] → [AI Agent] + [Ollama Chat Model] → [Respond to Webhook]
 
 Step 7 — Test it
 
