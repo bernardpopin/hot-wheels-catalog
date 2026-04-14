@@ -57,24 +57,24 @@ Step 3 — Add the AI Agent
     - Source for Prompt (User Message): choose "Define below"                                                                                                   
     - Prompt (User Message): click the expression editor {} and enter:
 
-    ```bash
-    {{ $json.body.message }}
-    ```
+```
+{{ $json.body.message }}
+```
 
     - System Message: click the expression editor and enter:
 
-    ```bash
-    You are a helpful assistant for a Hot Wheels car collection. Answer questions based on the collection data provided below.
+```
+You are a helpful assistant for a Hot Wheels car collection. Answer questions based on the collection data provided below.
 
-    Collection (JSON):
-    {{ JSON.stringify($json.body.collection) }}
-    ```
+Collection (JSON):
+{{ JSON.stringify($json.body.collection) }}
+```
 
     - Include conversation history: if the field exists, you can pass:
 
-    ```bash
-    {{ $json.body.history }}
-    ```
+```
+{{ $json.body.history }}
+```
 
     - (This depends on your n8n version — skip if not available.)
 
@@ -91,10 +91,10 @@ Step 5 — Add the Respond to Webhook
   2. Set Respond With to "JSON"
   3. In the Response Body field, enter:
 
-  ```bash
-  { "output": {{ JSON.stringify($json.output) }} }
-  ```
-  
+```
+{ "output": {{ JSON.stringify($json.output) }} }
+```
+
   ▎ If $json.output is empty after testing, try $json.response or $json.text — the field name depends on your n8n + LangChain version.
 
 Step 6 — Connect the nodes
