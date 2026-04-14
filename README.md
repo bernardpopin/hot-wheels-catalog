@@ -54,14 +54,14 @@ Step 3 — Add the AI Agent
 
   1. Click "+" after Webhook, search for "AI Agent"
   2. In the AI Agent node settings:
-    - Source for Prompt (User Message): choose "Define below"                                                                                                   
-    - Prompt (User Message): click the expression editor {} and enter:
+    Source for Prompt (User Message): choose "Define below"
+    Prompt (User Message): click the expression editor {} and enter:
 
     ```js
     {{ $json.body.message }}
     ```
 
-    - System Message: click the expression editor and enter:
+    System Message: click the expression editor and enter:
 
     ```js
     You are a helpful assistant for a Hot Wheels car collection. Answer questions based on the collection data provided below.
@@ -69,7 +69,7 @@ Step 3 — Add the AI Agent
     {{ JSON.stringify($json.body.collection) }}
     ```
 
-    - Include conversation history: if the field exists, you can pass (This depends on your n8n version — skip if not available.):
+    Include conversation history: if the field exists, you can pass (This depends on your n8n version — skip if not available.):
 
     ```js
     {{ $json.body.history }}
@@ -97,7 +97,6 @@ Step 5 — Add the Respond to Webhook
 Step 6 — Connect the nodes
 
   The final flow should look like:
-
   [Webhook] → [AI Agent] + [Ollama Chat Model] → [Respond to Webhook]
 
 Step 7 — Test it
