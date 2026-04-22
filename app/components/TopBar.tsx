@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PriceUpdateButton from "./PriceUpdateButton";
 
 export default function TopBar() {
   return (
@@ -8,6 +9,7 @@ export default function TopBar() {
           Hot Wheels Car Collection
         </span>
         <div className="flex gap-2">
+          <PriceUpdateButton />
           <Link
             href="/?assistant=true"
             className="rounded-full border border-zinc-300 px-4 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-900"
