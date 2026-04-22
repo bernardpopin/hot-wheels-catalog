@@ -37,7 +37,7 @@ const item: CollectionItem = {
   series: "",
   color: "",
   modelNumber: "",
-  priceRange: "",
+  priceAverage: "",
   openWindow: false,
   bigWing: false,
   frontBoltPositionOnEdge: false,

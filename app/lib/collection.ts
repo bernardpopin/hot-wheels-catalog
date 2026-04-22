@@ -14,7 +14,7 @@ export type CollectionItem = {
   series: string;
   color: string;
   modelNumber: string;
-  priceRange: string;
+  priceAverage: string;
   openWindow: boolean;
   bigWing: boolean;
   frontBoltPositionOnEdge: boolean;

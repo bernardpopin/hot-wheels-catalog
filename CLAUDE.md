@@ -42,7 +42,7 @@ export type CollectionItem = {
   series: string;                    // Hot Wheels series name
   color: string;                     // Paint color
   modelNumber: string;               // Collector number
-  priceRange: string;                // e.g. "Main Line", "Premium"
+  priceAverage: string;                // e.g. "Main Line", "Premium"
   openWindow: boolean;               // casting variant flag
   bigWing: boolean;                  // casting variant flag
   frontBoltPositionOnEdge: boolean;  // casting variant flag

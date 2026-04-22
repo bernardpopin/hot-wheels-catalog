@@ -19,7 +19,7 @@ const defaultForm: FormState = {
   series: "",
   color: "",
   modelNumber: "",
-  priceRange: "",
+  priceAverage: "",
   openWindow: false,
   bigWing: false,
   frontBoltPositionOnEdge: false,
@@ -64,7 +64,7 @@ describe("ItemFormFields", () => {
       series: "Nightburnerz",
       color: "Blue",
       modelNumber: "043/250",
-      priceRange: "Premium",
+      priceAverage: "Premium",
     };
     render(<ItemFormFields form={form} onChange={noop} />);
     expect(screen.getByLabelText("Model name")).toHaveValue("Datsun 240Z Custom");
