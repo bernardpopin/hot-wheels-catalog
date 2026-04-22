@@ -119,7 +119,7 @@ describe("ModelDetail", () => {
     expect(screen.getByText("Series")).toBeInTheDocument();
     expect(screen.getByText("Color")).toBeInTheDocument();
     expect(screen.getByText("Model number")).toBeInTheDocument();
-    expect(screen.getByText("Price range")).toBeInTheDocument();
+    expect(screen.getByText("Price average")).toBeInTheDocument();
     expect(screen.getByText("Open window")).toBeInTheDocument();
     expect(screen.getByText("Big wing")).toBeInTheDocument();
     expect(screen.getByText("Front bolt position on edge")).toBeInTheDocument();

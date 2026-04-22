@@ -53,7 +53,7 @@ export default function ModelDetail({
         <Row label="Series" value={item.series || "—"} />
         <Row label="Color" value={item.color || "—"} />
         <Row label="Model number" value={item.modelNumber || "—"} />
-        <Row label="Price range" value={item.priceAverage || "—"} />
+        <Row label="Price average" value={item.priceAverage || "—"} />
         <Row label="Open window" value={item.openWindow ? "Yes" : "No"} />
         <Row label="Big wing" value={item.bigWing ? "Yes" : "No"} />
         <Row

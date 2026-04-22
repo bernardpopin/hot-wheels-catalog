@@ -159,7 +159,7 @@ export default function ItemFormFields({
 
       <div className="flex flex-col gap-1">
         <label htmlFor="priceAverage" className={labelClass}>
-          Price range
+          Price average
         </label>
         <input
           id="priceAverage"

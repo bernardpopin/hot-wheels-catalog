@@ -44,7 +44,7 @@ describe("AddForm", () => {
     expect(screen.getByLabelText("Series")).toBeInTheDocument();
     expect(screen.getByLabelText("Color")).toBeInTheDocument();
     expect(screen.getByLabelText("Model number")).toBeInTheDocument();
-    expect(screen.getByLabelText("Price range")).toBeInTheDocument();
+    expect(screen.getByLabelText("Price average")).toBeInTheDocument();
   });
 
   it("renders the four boolean checkboxes", () => {
