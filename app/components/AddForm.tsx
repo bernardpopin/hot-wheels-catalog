@@ -15,7 +15,7 @@ const initialState: FormState = {
   series: "",
   color: "",
   modelNumber: "",
-  priceAverage: "",
+  priceAverage: [],
   openWindow: false,
   bigWing: false,
   frontBoltPositionOnEdge: false,

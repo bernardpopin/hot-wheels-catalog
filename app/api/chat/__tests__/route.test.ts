@@ -22,7 +22,7 @@ const item: CollectionItem = {
   series: "",
   color: "Red",
   modelNumber: "043/250",
-  priceAverage: "Premium",
+  priceAverage: [],
   openWindow: true,
   bigWing: false,
   frontBoltPositionOnEdge: true,

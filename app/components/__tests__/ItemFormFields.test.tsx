@@ -19,7 +19,7 @@ const defaultForm: FormState = {
   series: "",
   color: "",
   modelNumber: "",
-  priceAverage: "",
+  priceAverage: [],
   openWindow: false,
   bigWing: false,
   frontBoltPositionOnEdge: false,
@@ -44,7 +44,6 @@ describe("ItemFormFields", () => {
     expect(screen.getByLabelText("Series")).toBeInTheDocument();
     expect(screen.getByLabelText("Color")).toBeInTheDocument();
     expect(screen.getByLabelText("Model number")).toBeInTheDocument();
-    expect(screen.getByLabelText("Price average")).toBeInTheDocument();
   });
 
   it("renders all four boolean checkboxes", () => {
@@ -64,7 +63,7 @@ describe("ItemFormFields", () => {
       series: "Nightburnerz",
       color: "Blue",
       modelNumber: "043/250",
-      priceAverage: "Premium",
+      priceAverage: [],
     };
     render(<ItemFormFields form={form} onChange={noop} />);
     expect(screen.getByLabelText("Model name")).toHaveValue("Datsun 240Z Custom");
@@ -73,7 +72,6 @@ describe("ItemFormFields", () => {
     expect(screen.getByLabelText("Series")).toHaveValue("Nightburnerz");
     expect(screen.getByLabelText("Color")).toHaveValue("Blue");
     expect(screen.getByLabelText("Model number")).toHaveValue("043/250");
-    expect(screen.getByLabelText("Price average")).toHaveValue("Premium");
   });
 
   it("displays numeric year values", () => {
@@ -153,7 +151,6 @@ describe("ItemFormFields", () => {
     expect(screen.getByLabelText("Series")).not.toBeRequired();
     expect(screen.getByLabelText("Color")).not.toBeRequired();
     expect(screen.getByLabelText("Model number")).not.toBeRequired();
-    expect(screen.getByLabelText("Price average")).not.toBeRequired();
   });
 
   it("nullable year fields are not required", () => {

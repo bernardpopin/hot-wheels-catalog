@@ -16,24 +16,27 @@ export async function POST() {
   }
 
   const data = await readCollection();
+  const today = new Date().toISOString().split("T")[0];
   let updated = 0;
-
-  const results: { id: string; modelName: string; priceAverage: string }[] = [];
 
   for (const item of data.items) {
     const prices = await crawlPricesForItem(item);
 
     if (prices.length > 0) {
       const avg = calcAverage(prices);
-      item.priceAverage = `${avg.toFixed(2)} PLN`;
+      const newEntry = { date: today, price: `${avg.toFixed(2)} PLN` };
+      const existingIndex = item.priceAverage.findIndex((e) => e.date === today);
+      if (existingIndex >= 0) {
+        item.priceAverage[existingIndex] = newEntry;
+      } else {
+        item.priceAverage.push(newEntry);
+      }
       updated++;
     }
-
-    results.push({ id: item.id, modelName: item.modelName, priceAverage: item.priceAverage });
   }
 
   await writeCollection(data);
   revalidatePath("/");
 
-  return NextResponse.json({ updated, total: data.items.length, results });
+  return NextResponse.json({ updated, total: data.items.length });
 }

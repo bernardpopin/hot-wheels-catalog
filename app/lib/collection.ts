@@ -3,6 +3,11 @@ import path from "path";
 
 const DATA_FILE = path.join(process.cwd(), "data", "collection.json");
 
+export type PriceEntry = {
+  date: string;  // ISO date: "YYYY-MM-DD"
+  price: string; // e.g. "45.50 PLN"
+};
+
 export type CollectionItem = {
   id: string;
   modelName: string;
@@ -14,7 +19,7 @@ export type CollectionItem = {
   series: string;
   color: string;
   modelNumber: string;
-  priceAverage: string;
+  priceAverage: PriceEntry[];
   openWindow: boolean;
   bigWing: boolean;
   frontBoltPositionOnEdge: boolean;

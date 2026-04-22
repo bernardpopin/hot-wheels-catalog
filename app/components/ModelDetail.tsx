@@ -21,6 +21,7 @@ export default function ModelDetail({
   onEdit: () => void;
 }) {
   const deleteItem = deleteCollectionItem.bind(null, item.id);
+  const latestPrice = [...item.priceAverage].sort((a, b) => b.date.localeCompare(a.date))[0]?.price ?? "—";
 
   return (
     <div className="flex flex-col gap-6">
@@ -53,7 +54,7 @@ export default function ModelDetail({
         <Row label="Series" value={item.series || "—"} />
         <Row label="Color" value={item.color || "—"} />
         <Row label="Model number" value={item.modelNumber || "—"} />
-        <Row label="Price average" value={item.priceAverage || "—"} />
+        <Row label="Price average" value={latestPrice} />
         <Row label="Open window" value={item.openWindow ? "Yes" : "No"} />
         <Row label="Big wing" value={item.bigWing ? "Yes" : "No"} />
         <Row

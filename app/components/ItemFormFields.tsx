@@ -157,20 +157,6 @@ export default function ItemFormFields({
         />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="priceAverage" className={labelClass}>
-          Price average
-        </label>
-        <input
-          id="priceAverage"
-          type="text"
-          name="priceAverage"
-          value={form.priceAverage}
-          onChange={onChange}
-          className={inputClass}
-        />
-      </div>
-
       <div className="flex flex-col gap-3">
         {checkboxFields.map(({ name, label }) => (
           <label key={name} className="flex items-center gap-3 cursor-pointer">

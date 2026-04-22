@@ -31,7 +31,7 @@ const baseItem: CollectionItem = {
   series: "HW Race Team",
   color: "Blue",
   modelNumber: "5/10",
-  priceAverage: "Basic",
+  priceAverage: [],
   openWindow: true,
   bigWing: false,
   frontBoltPositionOnEdge: true,
