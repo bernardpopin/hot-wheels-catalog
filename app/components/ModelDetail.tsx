@@ -3,6 +3,7 @@
 import type { CollectionItem } from "@/app/lib/collection";
 import { deleteCollectionItem } from "@/app/lib/actions";
 import RemoveButton from "@/app/components/RemoveButton";
+import PriceChart from "@/app/components/PriceChart";
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -67,6 +68,7 @@ export default function ModelDetail({
           value={item.backBoltPositionOnEdge ? "Yes" : "No"}
         />
       </dl>
+      <PriceChart priceAverage={item.priceAverage} />
     </div>
   );
 }

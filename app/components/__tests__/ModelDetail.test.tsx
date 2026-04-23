@@ -14,6 +14,10 @@ vi.mock("@/app/components/RemoveButton", () => ({
   ),
 }));
 
+vi.mock("@/app/components/PriceChart", () => ({
+  default: () => <div data-testid="price-chart-stub" />,
+}));
+
 beforeEach(() => {
   HTMLDialogElement.prototype.showModal = vi.fn();
   HTMLDialogElement.prototype.close = vi.fn();

@@ -16,6 +16,10 @@
         {
           "date": "2026-04-22",
           "price": "60.90 PLN"
+        },
+        {
+          "date": "2026-04-23",
+          "price": "27.40 PLN"
         }
       ],
       "openWindow": false,
@@ -39,6 +43,10 @@
         {
           "date": "2026-04-22",
           "price": "31.10 PLN"
+        },
+        {
+          "date": "2026-04-23",
+          "price": "30.90 PLN"
         }
       ],
       "openWindow": false,
@@ -62,6 +70,10 @@
         {
           "date": "2026-04-22",
           "price": "22.40 PLN"
+        },
+        {
+          "date": "2026-04-23",
+          "price": "20.40 PLN"
         }
       ],
       "openWindow": false,

@@ -31,6 +31,11 @@ Tests use **Vitest** with **React Testing Library** (`@testing-library/react`, `
 The single domain type is `CollectionItem`, defined in `app/lib/collection.ts`:
 
 ```ts
+export type PriceEntry = {
+  date: string;   // ISO date, e.g. "2026-04-01"
+  price: string;  // e.g. "35.50 PLN"
+};
+
 export type CollectionItem = {
   id: string;                        // Date.now().toString() — no UUID library
   modelName: string;                 // Hot Wheels model name, e.g. "Datsun 240Z Custom"
@@ -42,7 +47,8 @@ export type CollectionItem = {
   series: string;                    // Hot Wheels series name
   color: string;                     // Paint color
   modelNumber: string;               // Collector number
-  priceAverage: string;                // e.g. "Main Line", "Premium"
+  quantity: number;                  // Number of copies owned, default 1
+  priceAverage: PriceEntry[];        // Price history entries, one per crawl date
   openWindow: boolean;               // casting variant flag
   bigWing: boolean;                  // casting variant flag
   frontBoltPositionOnEdge: boolean;  // casting variant flag
@@ -66,17 +72,19 @@ Read/write via Node.js `fs/promises` in `app/lib/collection.ts` (`readCollection
 
 ### Component split
 
-- **Server components** (no directive): `List`, `TopBar`, `page.tsx` — call `readCollection()` directly.
-- **Client components** (`"use client"`): `AddForm`, `EditForm`, `ModelDetail`, `DetailPanel`, `ItemFormFields`, `Search`, `RemoveButton`, `AgentChat` — handle interactive state.
+- **Server components** (no directive): `List`, `TopBar`, `page.tsx` — call `readCollection()` directly. `TopBar` computes the total collection value (`quantity × latest price` per item, summed) and renders it as "Total value: X.XX PLN" (or "—" when no prices exist).
+- **Client components** (`"use client"`): `AddForm`, `EditForm`, `ModelDetail`, `DetailPanel`, `ItemFormFields`, `Search`, `RemoveButton`, `AgentChat`, `PriceUpdateButton`, `PriceChart` — handle interactive state.
 
 Key client components:
 - `DetailPanel` — toggles between `ModelDetail` (view) and `EditForm` (edit) using local `editing` state.
-- `ModelDetail` — displays all fields of a selected item; receives an `onEdit` callback prop that switches `DetailPanel` to edit mode.
+- `ModelDetail` — displays all fields of a selected item; receives an `onEdit` callback prop that switches `DetailPanel` to edit mode. Renders `<PriceChart>` at the bottom.
 - `EditForm` — pre-fills with the current item's values, calls `updateCollectionItem`, then `router.refresh()` + `onDone()`.
 - `AddForm` — blank form that calls `addCollectionItem` and resets to initial state after save.
 - `ItemFormFields` — shared controlled-input component used by both `AddForm` and `EditForm`.
 - `useItemForm` — custom hook (`app/components/useItemForm.ts`) managing `FormState` with typed `handleChange` for text, number (supports empty → `null`), and checkbox inputs.
 - `AgentChat` — AI chat UI. POSTs `{ message, history }` to `POST /api/chat`, which proxies to an n8n webhook. Reads reply from `data.output ?? data.response ?? data.message`.
+- `PriceUpdateButton` — triggers `POST /api/update-prices` to crawl prices for all items. Shows four states: idle ("AI Update prices"), loading ("Updating…"), done ("Updated N/M"), error ("Error — retry?"). Resets to idle after 5 seconds.
+- `PriceChart` — line chart (Chart.js / react-chartjs-2) showing price history for a single item. Exports `filterByRange(entries, range)` as a named export for unit testing. Range buttons: 1M, 3M, 6M, 1Y, All (default). Shows "No data for this period." when the filtered range is empty.
 
 ### Routing / UI state
 
@@ -99,6 +107,22 @@ Use Server Actions in `app/lib/actions.ts` (`"use server"`):
 A REST API at `app/api/collection/route.ts` also exists (`GET /api/collection`, `POST /api/collection`) but duplicates the Server Action logic rather than sharing it.
 
 `POST /api/chat` (`app/api/chat/route.ts`) proxies chat messages to an n8n webhook. It reads the `N8N_WEBHOOK_URL` env var (returns 500 if unset), forwards `{ message, history, collection }` to the webhook, and streams the response status and body back to the caller.
+
+### Price crawling
+
+`POST /api/update-prices` (`app/api/update-prices/route.ts`) crawls market prices for every item and appends a dated entry to `priceAverage`:
+
+1. For each item, builds a search query: `"Hot Wheels <modelName>"`.
+2. Fetches each URL in `PRICE_SOURCES` (configured in `app/lib/priceConfig.ts`), extracts up to 10 prices using the source's `priceRegex`.
+3. Averages all collected prices and stores `{ date: today, price: "X.XX PLN" }` in `item.priceAverage` (upserts by date — one entry per day).
+4. Saves the collection and calls `revalidatePath("/")`.
+5. Returns `{ updated: number, total: number }`.
+
+Returns 400 if `PRICE_SOURCES` is empty. Network errors per source are silently skipped.
+
+**`app/lib/priceConfig.ts`** — defines `PriceSource[]`. Each source has a `name`, `buildUrl(query)` function, and `priceRegex` (must have one capturing group for the price number). Currently configured: Allegro and OLX (Polish złoty prices). Add new sources here to extend crawling.
+
+**`app/lib/priceCrawler.ts`** — `crawlPricesForItem(item)` fetches all sources and returns raw price numbers. `calcAverage(prices)` computes the mean. Both are exported for unit testing.
 
 ### Styling
 
