@@ -52,6 +52,7 @@ const baseItem: CollectionItem = {
   bigWing: false,
   frontBoltPositionOnEdge: false,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 const testSource: PriceSource = {

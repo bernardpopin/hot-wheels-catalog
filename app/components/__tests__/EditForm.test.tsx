@@ -35,6 +35,7 @@ const baseItem: CollectionItem = {
   bigWing: false,
   frontBoltPositionOnEdge: true,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 beforeEach(() => {

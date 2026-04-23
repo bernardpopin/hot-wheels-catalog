@@ -11,6 +11,7 @@
       "series": "Fast & Furious",
       "color": "Orange",
       "modelNumber": "HNT20",
+      "quantity": 1,
       "priceAverage": [
         {
           "date": "2026-04-22",
@@ -33,6 +34,7 @@
       "series": "",
       "color": "Black",
       "modelNumber": "CFH16",
+      "quantity": 1,
       "priceAverage": [
         {
           "date": "2026-04-22",
@@ -55,6 +57,7 @@
       "series": "Fast & Furious",
       "color": "Blue",
       "modelNumber": "HNR93",
+      "quantity": 1,
       "priceAverage": [
         {
           "date": "2026-04-22",

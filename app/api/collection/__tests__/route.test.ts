@@ -28,6 +28,7 @@ const item1: CollectionItem = {
   bigWing: false,
   frontBoltPositionOnEdge: true,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 beforeEach(() => {
@@ -72,6 +73,7 @@ describe("POST /api/collection", () => {
     bigWing: false,
     frontBoltPositionOnEdge: false,
     backBoltPositionOnEdge: false,
+    quantity: 1,
   };
 
   function makeRequest(body: unknown) {
@@ -108,6 +110,7 @@ describe("POST /api/collection", () => {
       bigWing: true,
       frontBoltPositionOnEdge: true,
       backBoltPositionOnEdge: true,
+      quantity: 1,
     };
 
     const response = await POST(makeRequest(input) as never);

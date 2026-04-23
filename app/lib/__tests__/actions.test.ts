@@ -40,6 +40,7 @@ const existingItem: CollectionItem = {
   bigWing: false,
   frontBoltPositionOnEdge: true,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 const baseInput = {
@@ -55,6 +56,7 @@ const baseInput = {
   bigWing: false,
   frontBoltPositionOnEdge: false,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 beforeEach(() => {

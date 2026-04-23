@@ -29,6 +29,7 @@ beforeEach(() => {
     bigWing: false,
     frontBoltPositionOnEdge: false,
     backBoltPositionOnEdge: false,
+    quantity: 1,
   });
 });
 

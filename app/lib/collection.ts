@@ -19,6 +19,7 @@ export type CollectionItem = {
   series: string;
   color: string;
   modelNumber: string;
+  quantity: number;
   priceAverage: PriceEntry[];
   openWindow: boolean;
   bigWing: boolean;

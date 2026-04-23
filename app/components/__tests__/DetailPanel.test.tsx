@@ -42,6 +42,7 @@ const item: CollectionItem = {
   bigWing: false,
   frontBoltPositionOnEdge: false,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 describe("DetailPanel", () => {

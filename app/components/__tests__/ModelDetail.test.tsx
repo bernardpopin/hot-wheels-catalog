@@ -36,6 +36,7 @@ const baseItem: CollectionItem = {
   bigWing: false,
   frontBoltPositionOnEdge: true,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 describe("ModelDetail", () => {
@@ -90,6 +91,7 @@ describe("ModelDetail", () => {
       bigWing: true,
       frontBoltPositionOnEdge: true,
       backBoltPositionOnEdge: true,
+      quantity: 1,
     };
     render(<ModelDetail item={allTrue} onEdit={vi.fn()} />);
     expect(screen.getAllByText("Yes")).toHaveLength(4);
@@ -103,6 +105,7 @@ describe("ModelDetail", () => {
       bigWing: false,
       frontBoltPositionOnEdge: false,
       backBoltPositionOnEdge: false,
+      quantity: 1,
     };
     render(<ModelDetail item={allFalse} onEdit={vi.fn()} />);
     expect(screen.getAllByText("No")).toHaveLength(4);

@@ -31,6 +31,7 @@ const baseItem: CollectionItem = {
   bigWing: false,
   frontBoltPositionOnEdge: false,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 function makeSource(overrides?: Partial<PriceSource>): PriceSource {

@@ -24,6 +24,7 @@ const defaultForm: FormState = {
   bigWing: false,
   frontBoltPositionOnEdge: false,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 let onChange: ChangeHandler;
@@ -104,6 +105,7 @@ describe("ItemFormFields", () => {
       bigWing: false,
       frontBoltPositionOnEdge: true,
       backBoltPositionOnEdge: false,
+      quantity: 1,
     };
     render(<ItemFormFields form={form} onChange={noop} />);
     expect(screen.getByLabelText("Open window")).toBeChecked();

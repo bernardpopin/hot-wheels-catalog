@@ -27,6 +27,7 @@ const item: CollectionItem = {
   bigWing: false,
   frontBoltPositionOnEdge: true,
   backBoltPositionOnEdge: false,
+  quantity: 1,
 };
 
 function makeRequest(body: object) {

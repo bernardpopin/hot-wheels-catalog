@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     series: body.series,
     color: body.color,
     modelNumber: body.modelNumber,
+    quantity: body.quantity,
     priceAverage: body.priceAverage,
     openWindow: body.openWindow,
     bigWing: body.bigWing,

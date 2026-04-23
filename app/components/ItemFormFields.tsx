@@ -157,6 +157,22 @@ export default function ItemFormFields({
         />
       </div>
 
+      <div className="flex flex-col gap-1">
+        <label htmlFor="quantity" className={labelClass}>
+          Quantity
+        </label>
+        <input
+          id="quantity"
+          type="number"
+          name="quantity"
+          value={form.quantity}
+          onChange={onChange}
+          required
+          min={0}
+          className={inputClass}
+        />
+      </div>
+
       <div className="flex flex-col gap-3">
         {checkboxFields.map(({ name, label }) => (
           <label key={name} className="flex items-center gap-3 cursor-pointer">
