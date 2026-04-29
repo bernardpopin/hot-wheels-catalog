@@ -83,7 +83,8 @@ Key client components:
 - `ItemFormFields` — shared controlled-input component used by both `AddForm` and `EditForm`.
 - `useItemForm` — custom hook (`app/components/useItemForm.ts`) managing `FormState` with typed `handleChange` for text, number (supports empty → `null`), and checkbox inputs.
 - `AgentChat` — AI chat UI. POSTs `{ message, history }` to `POST /api/chat`, which proxies to an n8n webhook. Reads reply from `data.output ?? data.response ?? data.message`.
-- `PriceUpdateButton` — triggers `POST /api/update-prices` to crawl prices for all items. Shows four states: idle ("AI Update prices"), loading ("Updating…"), done ("Updated N/M"), error ("Error — retry?"). Resets to idle after 5 seconds.
+- `PriceUpdateButton` — triggers `POST /api/update-prices` to crawl prices for all items. Shows four states: idle ("AI Update prices"), loading ("Updating…"), done ("Updated N/M"), error ("Error — retry?"). Resets to idle after 5 seconds. On success, reads `data.changes` from the response and passes it to `PriceChangeToast`; auto-dismisses all toasts after 8 seconds.
+- `PriceChangeToast` — fixed-position toast list (top-right) that displays price change notifications. Receives `notifications: PriceChangeNotification[]` and `onDismiss: (id: number) => void`. Renders nothing when the array is empty. Each card shows model name, old → new price, and `changePercent` with a coloured arrow (↑ red for increases, ↓ green for decreases) and a `+` prefix for positive values. `PriceChangeNotification` is `PriceChange & { id: number }`; `PriceChange` is exported from `app/api/update-prices/route.ts`.
 - `PriceChart` — line chart (Chart.js / react-chartjs-2) showing price history for a single item. Exports `filterByRange(entries, range)` as a named export for unit testing. Range buttons: 1M, 3M, 6M, 1Y, All (default). Shows "No data for this period." when the filtered range is empty.
 
 ### Routing / UI state

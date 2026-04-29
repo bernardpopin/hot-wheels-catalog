@@ -251,18 +251,18 @@ describe("crawlPricesForItem", () => {
     });
   });
 
-  describe("MAX_PRICES limit (10)", () => {
-    it("caps the total returned prices at 10", async () => {
-      const html = Array.from({ length: 15 }, (_, i) => `${i + 1} zł`).join(" ");
+  describe("MAX_PRICES limit (50)", () => {
+    it("caps the total returned prices at 50", async () => {
+      const html = Array.from({ length: 50 }, (_, i) => `${i + 1} zł`).join(" ");
       mockSources.push(makeSource());
       mockOkResponse(html);
 
       const result = await crawlPricesForItem(baseItem);
-      expect(result).toHaveLength(10);
+      expect(result).toHaveLength(50);
     });
 
     it("stops fetching additional sources once 10 prices are collected", async () => {
-      const html = Array.from({ length: 10 }, (_, i) => `${i + 1} zł`).join(" ");
+      const html = Array.from({ length: 50 }, (_, i) => `${i + 1} zł`).join(" ");
       mockSources.push(
         makeSource({ name: "Site1", buildUrl: () => "https://site1.com" }),
         makeSource({ name: "Site2", buildUrl: () => "https://site2.com" })

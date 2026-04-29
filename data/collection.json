@@ -20,6 +20,14 @@
         {
           "date": "2026-04-23",
           "price": "27.40 PLN"
+        },
+        {
+          "date": "2026-04-24",
+          "price": "58.46 PLN"
+        },
+        {
+          "date": "2026-04-27",
+          "price": "66.09 PLN"
         }
       ],
       "openWindow": false,
@@ -47,6 +55,14 @@
         {
           "date": "2026-04-23",
           "price": "30.90 PLN"
+        },
+        {
+          "date": "2026-04-24",
+          "price": "31.10 PLN"
+        },
+        {
+          "date": "2026-04-27",
+          "price": "31.72 PLN"
         }
       ],
       "openWindow": false,
@@ -74,10 +90,49 @@
         {
           "date": "2026-04-23",
           "price": "20.40 PLN"
+        },
+        {
+          "date": "2026-04-24",
+          "price": "27.47 PLN"
+        },
+        {
+          "date": "2026-04-27",
+          "price": "26.80 PLN"
         }
       ],
       "openWindow": false,
       "bigWing": false,
+      "frontBoltPositionOnEdge": true,
+      "backBoltPositionOnEdge": true
+    },
+    {
+      "id": "1777042522351",
+      "modelName": "Ferrari F40 Competizione",
+      "carBrand": "Ferrari",
+      "carModel": "F40",
+      "carProductionYear": null,
+      "releaseYear": 2026,
+      "yearOnChassis": null,
+      "series": "",
+      "color": "Black",
+      "modelNumber": "",
+      "quantity": 4,
+      "priceAverage": [
+        {
+          "date": "2026-04-22",
+          "price": "15.00 PLN"
+        },
+        {
+          "date": "2026-04-24",
+          "price": "12.53 PLN"
+        },
+        {
+          "date": "2026-04-27",
+          "price": "12.54 PLN"
+        }
+      ],
+      "openWindow": false,
+      "bigWing": true,
       "frontBoltPositionOnEdge": true,
       "backBoltPositionOnEdge": true
     }

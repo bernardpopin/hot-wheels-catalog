@@ -12,6 +12,9 @@ export type PriceSource = {
   priceRegex: RegExp;
 };
 
+/** Minimum % price change (absolute value) that triggers a notification. */
+export const PRICE_CHANGE_THRESHOLD_PERCENT = 5;
+
 export const PRICE_SOURCES: PriceSource[] = [                                                                                                                                                                      
   {
     name: "Allegro",

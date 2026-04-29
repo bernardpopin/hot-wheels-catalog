@@ -15,10 +15,12 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-function mockSuccess(updated: number, total: number) {
+type Change = { modelName: string; oldPrice: string; newPrice: string; changePercent: number };
+
+function mockSuccess(updated: number, total: number, changes: Change[] = []) {
   mockFetch.mockResolvedValue({
     ok: true,
-    json: () => Promise.resolve({ updated, total }),
+    json: () => Promise.resolve({ updated, total, changes }),
   });
 }
 
@@ -273,5 +275,85 @@ describe("auto-reset to idle after 5 seconds", () => {
     expect(screen.queryByRole("button", { name: "AI Update prices" })).not.toBeInTheDocument();
 
     timer.cancel(); // prevent the real 5 s timer from firing after unmount
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Toast notifications for price changes
+// ---------------------------------------------------------------------------
+
+describe("price change toast notifications", () => {
+  it("shows no toast when changes is an empty array", async () => {
+    mockSuccess(1, 1, []);
+    const user = userEvent.setup();
+    render(<PriceUpdateButton />);
+
+    await user.click(screen.getByRole("button"));
+    await screen.findByRole("button", { name: /Updated/ });
+
+    expect(screen.queryByRole("button", { name: "Dismiss" })).not.toBeInTheDocument();
+  });
+
+  it("shows no toast when response does not include changes", async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ updated: 1, total: 1 }),
+    });
+    const user = userEvent.setup();
+    render(<PriceUpdateButton />);
+
+    await user.click(screen.getByRole("button"));
+    await screen.findByRole("button", { name: /Updated/ });
+
+    expect(screen.queryByRole("button", { name: "Dismiss" })).not.toBeInTheDocument();
+  });
+
+  it("shows a toast card for each price change", async () => {
+    mockSuccess(2, 2, [
+      { modelName: "Datsun 240Z", oldPrice: "30.00 PLN", newPrice: "35.00 PLN", changePercent: 16.7 },
+      { modelName: "Ferrari F40", oldPrice: "100.00 PLN", newPrice: "80.00 PLN", changePercent: -20 },
+    ]);
+    const user = userEvent.setup();
+    render(<PriceUpdateButton />);
+
+    await user.click(screen.getByRole("button"));
+    await screen.findByRole("button", { name: /Updated/ });
+
+    expect(await screen.findByText("Datsun 240Z")).toBeInTheDocument();
+    expect(screen.getByText("Ferrari F40")).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Dismiss" })).toHaveLength(2);
+  });
+
+  it("dismisses a single toast when its Dismiss button is clicked", async () => {
+    mockSuccess(1, 1, [
+      { modelName: "Datsun 240Z", oldPrice: "30.00 PLN", newPrice: "35.00 PLN", changePercent: 16.7 },
+    ]);
+    const user = userEvent.setup();
+    render(<PriceUpdateButton />);
+
+    await user.click(screen.getByRole("button"));
+    await screen.findByText("Datsun 240Z");
+
+    await user.click(screen.getByRole("button", { name: "Dismiss" }));
+
+    expect(screen.queryByText("Datsun 240Z")).not.toBeInTheDocument();
+  });
+
+  it("dismisses only the clicked toast when multiple are shown", async () => {
+    mockSuccess(2, 2, [
+      { modelName: "Car A", oldPrice: "30.00 PLN", newPrice: "35.00 PLN", changePercent: 16.7 },
+      { modelName: "Car B", oldPrice: "50.00 PLN", newPrice: "40.00 PLN", changePercent: -20 },
+    ]);
+    const user = userEvent.setup();
+    render(<PriceUpdateButton />);
+
+    await user.click(screen.getByRole("button"));
+    await screen.findByText("Car A");
+
+    const dismissButtons = screen.getAllByRole("button", { name: "Dismiss" });
+    await user.click(dismissButtons[0]); // dismiss first
+
+    expect(screen.queryByText("Car A")).not.toBeInTheDocument();
+    expect(screen.getByText("Car B")).toBeInTheDocument();
   });
 });

@@ -1,7 +1,7 @@
 import type { CollectionItem } from "@/app/lib/collection";
 import { PRICE_SOURCES } from "@/app/lib/priceConfig";
 
-const MAX_PRICES = 10;
+const MAX_PRICES = 50;
 
 function buildSearchQuery(item: CollectionItem): string {
   return `Hot Wheels ${item.modelName}`.trim();

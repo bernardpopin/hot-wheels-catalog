@@ -9,6 +9,7 @@ const { mockSources } = vi.hoisted(() => ({
 
 vi.mock("@/app/lib/priceConfig", () => ({
   PRICE_SOURCES: mockSources,
+  PRICE_CHANGE_THRESHOLD_PERCENT: 5,
 }));
 
 vi.mock("@/app/lib/collection", () => ({
@@ -352,5 +353,171 @@ describe("empty collection", () => {
 
     expect(mockWriteCollection).toHaveBeenCalledOnce();
     expect(mockRevalidatePath).toHaveBeenCalledWith("/");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Price change detection — response.changes array
+// ---------------------------------------------------------------------------
+
+describe("price change detection", () => {
+  beforeEach(() => mockSources.push(testSource));
+
+  it("returns changes: [] when the collection is empty", async () => {
+    mockReadCollection.mockResolvedValue({ items: [] });
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes).toEqual([]);
+  });
+
+  it("returns changes: [] when there is no previous price entry", async () => {
+    mockReadCollection.mockResolvedValue({ items: [{ ...baseItem, priceAverage: [] }] });
+    mockCrawl.mockResolvedValue([30]);
+    mockCalcAverage.mockReturnValue(30);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes).toEqual([]);
+  });
+
+  it("returns changes: [] when the only previous entry is from today", async () => {
+    const today = new Date().toISOString().split("T")[0];
+    mockReadCollection.mockResolvedValue({
+      items: [{ ...baseItem, priceAverage: [{ date: today, price: "20.00 PLN" }] }],
+    });
+    mockCrawl.mockResolvedValue([30]);
+    mockCalcAverage.mockReturnValue(30);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes).toEqual([]);
+  });
+
+  it("detects a price increase that meets or exceeds the 5% threshold", async () => {
+    const oldEntry = { date: "2026-01-01", price: "100.00 PLN" };
+    mockReadCollection.mockResolvedValue({
+      items: [{ ...baseItem, priceAverage: [oldEntry] }],
+    });
+    // +10% change: 100 → 110
+    mockCrawl.mockResolvedValue([110]);
+    mockCalcAverage.mockReturnValue(110);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes).toHaveLength(1);
+    expect(body.changes[0]).toMatchObject({
+      modelName: baseItem.modelName,
+      oldPrice: "100.00 PLN",
+      changePercent: 10,
+    });
+  });
+
+  it("detects a price decrease that meets or exceeds the 5% threshold", async () => {
+    const oldEntry = { date: "2026-01-01", price: "100.00 PLN" };
+    mockReadCollection.mockResolvedValue({
+      items: [{ ...baseItem, priceAverage: [oldEntry] }],
+    });
+    // -20% change: 100 → 80
+    mockCrawl.mockResolvedValue([80]);
+    mockCalcAverage.mockReturnValue(80);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes).toHaveLength(1);
+    expect(body.changes[0].changePercent).toBe(-20);
+  });
+
+  it("does not emit a change when the difference is below the 5% threshold", async () => {
+    const oldEntry = { date: "2026-01-01", price: "100.00 PLN" };
+    mockReadCollection.mockResolvedValue({
+      items: [{ ...baseItem, priceAverage: [oldEntry] }],
+    });
+    // +3% change: below threshold of 5%
+    mockCrawl.mockResolvedValue([103]);
+    mockCalcAverage.mockReturnValue(103);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes).toEqual([]);
+  });
+
+  it("rounds changePercent to one decimal place", async () => {
+    const oldEntry = { date: "2026-01-01", price: "30.00 PLN" };
+    mockReadCollection.mockResolvedValue({
+      items: [{ ...baseItem, priceAverage: [oldEntry] }],
+    });
+    // 30 → 35.5 = +18.333...% → rounds to 18.3
+    mockCrawl.mockResolvedValue([35.5]);
+    mockCalcAverage.mockReturnValue(35.5);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes[0].changePercent).toBe(18.3);
+  });
+
+  it("uses the most recent historical entry (before today) as the old price", async () => {
+    const today = new Date().toISOString().split("T")[0];
+    mockReadCollection.mockResolvedValue({
+      items: [
+        {
+          ...baseItem,
+          priceAverage: [
+            { date: "2026-01-01", price: "10.00 PLN" },
+            { date: "2026-03-01", price: "50.00 PLN" }, // most recent before today
+            { date: today, price: "40.00 PLN" },         // today — excluded as "previous"
+          ],
+        },
+      ],
+    });
+    // 50 → 100 = +100%
+    mockCrawl.mockResolvedValue([100]);
+    mockCalcAverage.mockReturnValue(100);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes[0].oldPrice).toBe("50.00 PLN");
+  });
+
+  it("does not emit a change when the previous price cannot be parsed as a number", async () => {
+    const oldEntry = { date: "2026-01-01", price: "N/A" };
+    mockReadCollection.mockResolvedValue({
+      items: [{ ...baseItem, priceAverage: [oldEntry] }],
+    });
+    mockCrawl.mockResolvedValue([50]);
+    mockCalcAverage.mockReturnValue(50);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes).toEqual([]);
+  });
+
+  it("does not emit a change when crawl returns no prices for that item", async () => {
+    const oldEntry = { date: "2026-01-01", price: "30.00 PLN" };
+    mockReadCollection.mockResolvedValue({
+      items: [{ ...baseItem, priceAverage: [oldEntry] }],
+    });
+    mockCrawl.mockResolvedValue([]);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes).toEqual([]);
+  });
+
+  it("emits one change entry per changed item", async () => {
+    const oldEntry = { date: "2026-01-01", price: "100.00 PLN" };
+    const item2 = { ...baseItem, id: "2", modelName: "Ferrari F40", priceAverage: [oldEntry] };
+    mockReadCollection.mockResolvedValue({
+      items: [
+        { ...baseItem, priceAverage: [oldEntry] },
+        item2,
+      ],
+    });
+    mockCrawl.mockResolvedValue([200]); // +100% for both
+    mockCalcAverage.mockReturnValue(200);
+
+    const res = await POST();
+    const body = await res.json();
+    expect(body.changes).toHaveLength(2);
   });
 });
